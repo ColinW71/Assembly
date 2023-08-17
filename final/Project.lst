@@ -1,0 +1,188 @@
+Microsoft (R) Macro Assembler Version 14.30.30705.0	    11/07/21 19:06:27
+ProgrammingProject2.asm					     Page 1 - 1
+
+
+				; ProgrammingProject2.asm - Exercises 1-4.
+				; Colin Wallace 11-5-21
+				.386
+				.model flat,stdcall
+				.stack 4096
+				ExitProcess proto,dwExitCode:dword
+ 00000000			.code
+
+				;------------
+				; EXERCISE 1
+				;------------
+
+ 00000000			main proc
+ 00000000  B2 00		mov dl,0
+ 00000002  8A D0		mov dl,al
+ 00000004  80 FA 09		cmp dl,09h
+
+ 00000007  76 03		jbe DIGIT_ASCII
+ 00000009  80 C2 07		add dl,07h
+
+ 0000000C			DIGIT_ASCII:
+ 0000000C  80 C2 30		add dl,30h
+
+ 0000000F  C3			ret
+ 00000010			main endp
+				end main
+
+				;------------
+				; EXERCISE 2
+				;------------
+
+				main proc
+				   mov  eax, 94h                  ; in 1 instruction
+				   MOV  DH, AL
+				   SHR  DX, 4
+				   SHR  DL, 4 
+
+				   mov  al, dh
+				   call WriteHexDigit             ; use subroutines to not repeat yourself
+				   mov  al, dl
+				   call WriteHexDigit
+
+				   MOV  EDX, OFFSET myHex
+				   CALL WriteString
+				   invoke ExitProcess, 0 
+				WriteHexDigit:
+				   add al, '0'                    ; operations on AL use shorter encodings
+				   cmp al, '9'
+				   jbe ok1
+				   add al, 7
+				 ok1:
+				   jmp WriteChar                  ; tail-call replaced by jump
+				main endp 
+
+				;------------
+				; EXERCISE 3
+				;------------
+
+				main proc
+
+				Mov bl,'0'
+				mov ax,@data ;move data address to ax
+				mov ds,ax ;move ax to data segment   
+				  
+				lea dx , printName ;if use lea no need to use offset
+				mov ah,9 ;ask to print array of string
+				int 21h
+
+				mov dx,10 ;print \n
+				mov ah,2
+				int 21h
+
+				mov dx,13 ;cursor at first position
+				mov ah,2
+				int 21h
+
+				lea dx , print? ;if use lea no need to use offset
+				mov ah,9 ;ask to print array of string
+				int 21h
+
+				mov ah,1 ;input character
+				int 21h
+				  
+				mov cl,al
+
+				mov dx,10 ;print \n
+				mov ah,2
+				int 21h
+
+				mov dx,13 ;cursor at first position
+				mov ah,2
+				int 21h
+				  
+				lea dx , printNextSeqLine ;if use lea no need to use offset
+				mov ah,9 ;print message
+				int 21h
+
+				add cl,1 ;add one to the input
+
+				mov dl,cl ;move data to dl
+				mov ah,2 ;print ah
+				int 21h
+
+				mov ah,4ch
+				int 21h  
+
+				main endp
+				end main
+
+				;------------
+				; EXERCISE 4
+				;------------
+
+				main proc		
+				mov EAX,0
+				call ReadChar
+				call WriteChar
+				cmp AL,'A'
+				jge ProcAlph1
+
+				sub AL,48
+				jmp Inp1
+				ProcAlph1:
+				sub AL, 55
+
+				Inp1:
+				shl BL, 4
+				mov BL,AL
+				call ReadChar
+				call WriteChar
+				cmp AL,'A'
+				jge Procalph2
+
+				sub Al,48
+				jmp Inp2
+				Procalph2:
+				sub AL,55
+
+				Inp2:
+				add AL,BL
+				ret
+				main endp
+				end main
+Microsoft (R) Macro Assembler Version 14.30.30705.0	    11/07/21 19:06:27
+ProgrammingProject2.asm					     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000010 DWord	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000010 Public STDCALL
+  DIGIT_ASCII  . . . . . . . . .	L Near	 0000000C _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000003h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+
+	   0 Warnings
+	   0 Errors
